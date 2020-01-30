@@ -48,6 +48,8 @@ function destroy () {
   echo -n "destroy: taking down container for $1... "
   docker rm -f "$CONTAINER_NAME" 1> /dev/null
   echo "done"
+  shift
+  (( "$#" != 0 )) && destroy $@
   return 0
 }
 
