@@ -19,8 +19,9 @@ function help () {
 function bootstrap () {
   test -z $1 && echo "bootstrap: Specify environment and site to bootstrap." && return 1
   test -z "$AWS_PROFILE" && AWS_PROFILE=sudoreplay-$1
+  test -z "$S3_BUCKET_PREFIX" && S3_BUCKET_PREFIX=
   test -z "$S3_BUCKET_SUFFIX" && S3_BUCKET_SUFFIX=-sudoreplay-storage
-  test -z "$S3_BUCKET" && S3_BUCKET="$1S3_BUCKET_SUFFIX"
+  test -z "$S3_BUCKET" && S3_BUCKET="S3_BUCKET_PREFIX$1S3_BUCKET_SUFFIX"
 
   echo -n "bootstrap: launching docker container for $1... "
   docker run -ti -d --rm \
