@@ -67,7 +67,7 @@ Specify a static s3-bucket name, if needed.
 ./exegol replay __environment__ -l
 ```
 
-### Display bootstrapped environment.
+### Display bootstrapped environments.
 ```
 ./exegol status
 ```
