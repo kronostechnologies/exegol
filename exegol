@@ -80,7 +80,7 @@ function status () {
   return 0
 }
 
-test -z "$1" && help
+test -z "$1" && help && exit 1
 case "$1" in
   "bootstrap")
     shift
