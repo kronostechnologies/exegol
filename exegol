@@ -1,0 +1,107 @@
+#!/bin/bash
+
+test -f ~/.exegol && source ~/.exegol
+
+function help () {
+  echo
+  echo "# Exegol"
+  echo
+  echo "bootstrap [env]        :   bootstrap an exegol environment."
+  echo "destroy   [env]        :   destroy an exegol environment."
+  echo "help      [env]        :   displays this help."
+  echo "replay    [env] [args] :   run sudoreplay commands against an exegol environment."
+  echo "shell     [env]        :   start shell in container of the environment."
+  echo "status                 :   display running environments."
+  echo
+  exit 0
+}
+
+function bootstrap () {
+  test -z $1 && echo "bootstrap: Specify environment and site to bootstrap." && return 1
+  test -z "$AWS_PROFILE" && AWS_PROFILE=sudoreplay-$1
+  test -z "$S3_BUCKET_SUFFIX" && S3_BUCKET_SUFFIX=-sudoreplay-storage
+  test -z "$S3_BUCKET" && S3_BUCKET="$1S3_BUCKET_SUFFIX"
+
+  echo -n "bootstrap: launching docker container for $1... "
+  docker run -ti -d --rm \
+    --name "exegol_$1" \
+    --privileged \
+    -v $HOME/.aws:/root/.aws:ro \
+    kronostechnologies/exegol:latest \
+    /usr/bin/s3fs "$S3_BUCKET" /var/log/sudo-io/ \
+    -f -d -o use_sse -o use_cache=/tmp -o enable_content_md5 -o stat_cache_expire=30 \
+    -o profile=$AWS_PROFILE 1> /dev/null
+  sleep 1 && docker inspect "exegol_$1" > /dev/null 2>&1
+  if (( $? == 0 )); then
+    echo "done"
+    return 0
+  else
+    echo "failed"
+    return 1
+  fi
+}
+
+function destroy () {
+  test -z $1 && echo "destroy: Specify environment and site to destroy." && return 1
+  CONTAINER_NAME="exegol_$1"
+  echo -n "destroy: taking down container for $1... "
+  docker rm -f "$CONTAINER_NAME" 1> /dev/null
+  echo "done"
+  return 0
+}
+
+function replay () {
+  test -z $1 && echo "replay: Specify environment and site to replay." && return 1
+  CONTAINER_NAME="exegol_$1"
+  echo "replay: running sudoreplay against $1 environment..."
+  shift
+  docker exec -ti "$CONTAINER_NAME" /usr/bin/sudoreplay "$@"
+  return $?
+}
+
+function shell () {
+  test -z $1 && echo "shell: Specify environment and site to replay." && return 1
+  CONTAINER_NAME="exegol_$1"
+  shift
+  echo "shell: running shell against \"$CONTAINER_NAME\"..."
+  docker exec -ti "$CONTAINER_NAME" /bin/bash
+  return $?
+}
+
+function status () {
+  RUNNING=$(docker ps --all --filter "name=exegol_" --format "{{.Names}} - {{.Status }}")
+  if test -z "$RUNNING"; then
+    echo "No environment to list."
+  else
+    echo "Exegol environments"
+    echo -e "${RUNNING//exegol_/}"
+  fi
+  return 0
+}
+
+test -z "$1" && help
+case "$1" in
+  "bootstrap")
+    shift
+    bootstrap $@
+  ;;
+  "destroy")
+    shift
+    destroy $@
+  ;;
+  "replay")
+    shift
+    replay $@
+  ;;
+  "shell")
+    shift
+    shell $@
+  ;;
+  "status")
+    shift
+    status
+  ;;
+  *)
+    help
+  ;;
+esac
