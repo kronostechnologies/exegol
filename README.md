@@ -4,7 +4,7 @@
 
 ## What is this ?
 
-Starts an s3fs container mounting an s3 bucket containing sudoreplay backups. You can run sudoreplay commands against the container with the "replay" subcommand.  
+Starts an s3fs container mounting an s3 bucket containing sudoreplay backups. You can run sudoreplay commands against the container with exegol's "replay" subcommand.  
 The tool is designed to have environments in separate buckets, access can be restricted for users.  
 
 ### Build exegol image.
