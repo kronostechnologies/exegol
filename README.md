@@ -35,7 +35,7 @@ Specify a static s3-bucket name, if needed.
 
 ## Examples
 
-### IAM role example
+### IAM policy example
 ```
 {
     "Version": "2012-10-17",
