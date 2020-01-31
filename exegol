@@ -18,7 +18,7 @@ function help () {
 
 function bootstrap () {
   test -z $1 && echo "bootstrap: Specify environment and site to bootstrap." && return 1
-  test -z "$AWS_PROFILE" && AWS_PROFILE=sudoreplay-$1
+  test -z "$AWS_CREDS" && AWS_CREDS=sudoreplay-$1
   test -z "$S3_BUCKET_PREFIX" && S3_BUCKET_PREFIX=
   test -z "$S3_BUCKET_SUFFIX" && S3_BUCKET_SUFFIX=-sudoreplay-storage
   test -z "$S3_BUCKET" && S3_BUCKET="$S3_BUCKET_PREFIX$1$S3_BUCKET_SUFFIX"
@@ -31,7 +31,7 @@ function bootstrap () {
     kronostechnologies/exegol:latest \
     /usr/bin/s3fs "$S3_BUCKET" /var/log/sudo-io/ \
     -f -d -o use_sse -o use_cache=/tmp -o enable_content_md5 -o stat_cache_expire=30 \
-    -o profile=$AWS_PROFILE 1> /dev/null
+    -o profile=$AWS_CREDS 1> /dev/null
   sleep 1 && docker inspect "exegol_$1" > /dev/null 2>&1
   if (( $? == 0 )); then
     echo "done"

@@ -21,8 +21,8 @@ docker pull kronostechnologies/exegol
 
 These can be placed in ~/.exegol
 
-##### AWS_PROFILE
-Profile configured in your local ~/.aws.
+##### AWS_CREDS
+Credentials configured in your local ~/.aws/credentials.
 
 ##### S3_BUCKET_PREFIX
 This string will be prepended to form the bucket name.
