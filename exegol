@@ -28,6 +28,7 @@ function bootstrap () {
     --name "exegol_$1" \
     --privileged \
     -v $HOME/.aws:/root/.aws:ro \
+    -v /etc/localtime:/etc/localtime:ro \
     kronostechnologies/exegol:latest \
     /usr/bin/s3fs "$S3_BUCKET" /var/log/sudo-io/ \
     -f -d -o use_sse -o use_cache=/tmp -o enable_content_md5 -o stat_cache_expire=30 \
