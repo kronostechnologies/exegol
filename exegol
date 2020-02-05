@@ -18,7 +18,7 @@ function help () {
 
 function bootstrap () {
   test -z $1 && echo "bootstrap: Specify environment and site to bootstrap." && return 1
-  test -z "$AWS_CREDS" && AWS_CREDS=sudoreplay-$1
+  test -z "$AWS_CREDS" && AWS_CREDS=sudoreplay-global
   test -z "$S3_BUCKET_PREFIX" && S3_BUCKET_PREFIX=
   test -z "$S3_BUCKET_SUFFIX" && S3_BUCKET_SUFFIX=-sudoreplay-storage
   test -z "$S3_BUCKET" && S3_BUCKET="$S3_BUCKET_PREFIX$1$S3_BUCKET_SUFFIX"
